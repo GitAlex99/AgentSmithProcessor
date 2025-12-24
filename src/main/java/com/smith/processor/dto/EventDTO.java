@@ -1,7 +1,7 @@
 package com.smith.processor.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.smith.ingestion.model.EventType;
+import com.smith.processor.model.EventType;
 import lombok.Data;
 
 import java.time.Instant;
