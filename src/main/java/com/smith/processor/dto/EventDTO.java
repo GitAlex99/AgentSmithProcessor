@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.smith.processor.model.EventType;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -14,8 +15,8 @@ public class EventDTO {
     private String source;
     private String severity;
     private JsonNode payload;
-    private Instant timestamp;
+    private Timestamp timestamp;
     private UUID clientId;
-    private Instant receivedAt;
+    private Timestamp receivedAt;
     private String version;
 }
