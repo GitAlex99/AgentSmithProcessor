@@ -3,6 +3,7 @@ package com.smith.processor.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -24,5 +25,7 @@ public class EventFailedEntity {
     private String consumer_group;
     private Integer retry_count;
     private Timestamp created_at;
+    private Timestamp sent_at;
     private String status;
+    private Timestamp failed_at;
 }

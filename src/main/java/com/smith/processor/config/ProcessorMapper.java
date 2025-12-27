@@ -1,6 +1,7 @@
 package com.smith.processor.config;
 
 import com.smith.processor.dto.EventDTO;
+import com.smith.processor.entity.EventEntity;
 import com.smith.processor.entity.EventFailedEntity;
 import com.smith.processor.model.KafkaFailedData;
 
@@ -40,7 +41,28 @@ public class ProcessorMapper {
         entity.setRetry_count(failedData.getRetry_count());
         entity.setCreated_at(dto.getTimestamp());
         entity.setStatus(failedData.getStatus());
+        entity.setFailed_at(Timestamp.from(Instant.now()));
+        entity.setSent_at(dto.getTimestamp());
 
+        return entity;
+    }
+
+    public static EventEntity toEntity(EventDTO dto,String topic,long offset,int partition,String groupId){
+        EventEntity entity = new EventEntity();
+        entity.setId_event(dto.getId());
+        entity.setPayload(dto.getPayload().toString());
+        entity.setSent_at(dto.getTimestamp());
+        entity.setType(dto.getType());
+        entity.setSource(dto.getSource());
+        entity.setSeverity(dto.getSeverity());
+        entity.setClientId(dto.getClientId());
+        entity.setProcessed_at(dto.getReceivedAt());
+        entity.setVersion(dto.getVersion());
+        entity.setTopic(topic);
+        entity.setKafka_offset(offset);
+        entity.setKafka_partition(partition);
+        entity.setConsumer_group(groupId);
+        entity.setStatus("bho");
         return entity;
     }
 }

@@ -32,14 +32,16 @@ public class EventListener {
             kafkaTemplate = "retryKafkaTemplate"
     )
     @KafkaListener(topics = "smith.events.ingestion.v1", groupId = "test")
-    public void eventListener(EventDTO event){
+    public void eventListener(EventDTO event,
+                              @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+                              @Header(KafkaHeaders.OFFSET) long offset,
+                              @Header(KafkaHeaders.RECEIVED_PARTITION) int partition){
 
-        logger.info("message received: {}", event);
+        logger.info("message received in listener: {}", event);
 
-        if(!event.getSeverity().equals("test")){
-            throw new RuntimeException();
-        }
-        logger.info("message correctly processed: {}", event);
+        eventService.saveProcessedEvents(event,topic,offset,partition,"test");
+
+        logger.info("message correctly processed with id: {}", event.getId());
 
     }
 
