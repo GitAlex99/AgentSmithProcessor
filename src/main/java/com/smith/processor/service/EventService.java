@@ -2,10 +2,12 @@ package com.smith.processor.service;
 
 import com.smith.processor.DAO.EventFailedRepository;
 import com.smith.processor.DAO.EventRepository;
+import com.smith.processor.DAO.TechnicalFailureRepository;
 import com.smith.processor.config.ProcessorMapper;
 import com.smith.processor.dto.EventDTO;
 import com.smith.processor.entity.EventEntity;
 import com.smith.processor.entity.EventFailedEntity;
+import com.smith.processor.entity.TechnicalFailureEntity;
 import com.smith.processor.model.KafkaFailedData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,9 @@ public class EventService {
 
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private TechnicalFailureRepository technicalFailureRepository;
 
     public void saveEventFailed(EventDTO dto, KafkaFailedData failedData){
 
@@ -46,5 +51,15 @@ public class EventService {
         eventRepository.save(entity);
 
         logger.info("saved id event: {}",dto.getId());
+    }
+
+    public void saveTechnicalFailure(EventDTO dto,String topic, int partition, long offset, String stacktrace){
+
+        logger.info("saving technical failure for event: {}", dto.getId());
+
+        TechnicalFailureEntity entity = ProcessorMapper.toFailureEntity(dto,topic,offset,partition,stacktrace);
+        technicalFailureRepository.save(entity);
+
+        logger.info("technical failure for event: {}, saved",dto.getId());
     }
 }

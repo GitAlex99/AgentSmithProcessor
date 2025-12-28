@@ -1,14 +1,23 @@
 package com.smith.processor.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smith.processor.dto.EventDTO;
 import com.smith.processor.entity.EventEntity;
 import com.smith.processor.entity.EventFailedEntity;
+import com.smith.processor.entity.TechnicalFailureEntity;
 import com.smith.processor.model.KafkaFailedData;
+import com.smith.processor.service.EventService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 
 public class ProcessorMapper {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProcessorMapper.class);
 
     public static KafkaFailedData createFailedDataObj(String topic, int partition, long offset, String exception_type, String exception_message, String stackTrace, String consumer_group, Integer retry_count, String status){
 
@@ -63,6 +72,22 @@ public class ProcessorMapper {
         entity.setKafka_partition(partition);
         entity.setConsumer_group(groupId);
         entity.setStatus("bho");
+        return entity;
+    }
+
+    public static TechnicalFailureEntity toFailureEntity(EventDTO dto, String topic, long offset, int partition, String stacktrace){
+        TechnicalFailureEntity entity = new TechnicalFailureEntity();
+        ObjectMapper obj = new ObjectMapper();
+        entity.setTopic(topic);
+        entity.setKafka_offset(offset);
+        entity.setStacktrace_listener(stacktrace.substring(0,1500));
+        entity.setKafka_partition(partition);
+        try {
+            entity.setRaw_event(obj.writeValueAsString(dto));
+        } catch (JsonProcessingException e) {
+            logger.error("Error mapping event id: {} to json",dto.getId());
+        }
+
         return entity;
     }
 }
