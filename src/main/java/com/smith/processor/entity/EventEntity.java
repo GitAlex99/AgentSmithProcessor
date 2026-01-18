@@ -12,8 +12,6 @@ import java.util.UUID;
 @Table(name = "processed_events")
 public class EventEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
     private UUID id_event;
     private EventType type;
     private String source;
