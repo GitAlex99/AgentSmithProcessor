@@ -34,56 +34,15 @@ public class EventLogListener {
             kafkaTemplate = "retryKafkaTemplate"
     )
     @KafkaListener(
-            groupId = "test",
-            topicPartitions = @TopicPartition(
-                    topic = "smith.events.ingestion.v1.user.login",
-                    partitions = {"0,1,2"}),
-                    concurrency = "3")
+            topics = "smith.events.ingestion.v1.user.login",
+            groupId = "user-login-processor",
+            concurrency = "6"
+    )
     public void eventListenerHighLogin(EventDTO event,
                               @Header(KafkaHeaders.OFFSET) long offset,
                               @Header(KafkaHeaders.RECEIVED_PARTITION) int partition){
 
         saveLoginEvent(event,offset,partition);
-    }
-    @RetryableTopic(
-            attempts = "3",
-            backoff = @Backoff(delay = 1000,multiplier = 2.0),
-            autoCreateTopics = "true",
-            dltStrategy = DltStrategy.FAIL_ON_ERROR,
-            kafkaTemplate = "retryKafkaTemplate"
-    )
-    @KafkaListener(
-            groupId = "test",
-            topicPartitions = @TopicPartition(
-                    topic = "smith.events.ingestion.v1.user.login",
-                    partitions = {"3,4"}),
-            concurrency = "2")
-    public void eventListenerMediumLogin(EventDTO event,
-                                       @Header(KafkaHeaders.OFFSET) long offset,
-                                       @Header(KafkaHeaders.RECEIVED_PARTITION) int partition){
-
-        saveLoginEvent(event,offset,partition);
-
-    }
-    @RetryableTopic(
-            attempts = "3",
-            backoff = @Backoff(delay = 1000,multiplier = 2.0),
-            autoCreateTopics = "true",
-            dltStrategy = DltStrategy.FAIL_ON_ERROR,
-            kafkaTemplate = "retryKafkaTemplate"
-    )
-    @KafkaListener(
-            groupId = "test",
-            topicPartitions = @TopicPartition(
-                    topic = "smith.events.ingestion.v1.user.login",
-                    partitions = {"5"}),
-            concurrency = "1")
-    public void eventListenerLowLogin(EventDTO event,
-                                         @Header(KafkaHeaders.OFFSET) long offset,
-                                         @Header(KafkaHeaders.RECEIVED_PARTITION) int partition){
-
-        saveLoginEvent(event,offset,partition);
-
     }
 
     @KafkaListener(topics = "smith.events.ingestion.v1.default", groupId = "test")

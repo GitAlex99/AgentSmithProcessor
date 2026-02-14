@@ -13,6 +13,7 @@ import java.util.UUID;
 public class EventEntity {
     @Id
     private UUID id_event;
+    @Enumerated(EnumType.STRING)
     private EventType type;
     private String source;
     private String severity;

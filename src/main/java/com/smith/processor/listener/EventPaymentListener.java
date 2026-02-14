@@ -33,11 +33,10 @@ public class EventPaymentListener {
             kafkaTemplate = "retryKafkaTemplate"
     )
     @KafkaListener(
-            groupId = "test",
-            topicPartitions = @TopicPartition(
-                    topic = "smith.events.ingestion.v1.payment",
-                    partitions = {"0,1"}),
-            concurrency = "2")
+            topics = "smith.events.ingestion.v1.payment",
+            groupId = "user-payment-processor",
+            concurrency = "6"
+    )
     public void eventListenerHighPayment(EventDTO event,
                                          @Header(KafkaHeaders.OFFSET) long offset,
                                          @Header(KafkaHeaders.RECEIVED_PARTITION) int partition){
@@ -46,46 +45,6 @@ public class EventPaymentListener {
 
     }
 
-    @RetryableTopic(
-            attempts = "3",
-            backoff = @Backoff(delay = 1000,multiplier = 2.0),
-            autoCreateTopics = "true",
-            dltStrategy = DltStrategy.FAIL_ON_ERROR,
-            kafkaTemplate = "retryKafkaTemplate"
-    )
-    @KafkaListener(
-            groupId = "test",
-            topicPartitions = @TopicPartition(
-                    topic = "smith.events.ingestion.v1.payment",
-                    partitions = {"2"}),
-            concurrency = "1")
-    public void eventListenerMediumPayment(EventDTO event,
-                                           @Header(KafkaHeaders.OFFSET) long offset,
-                                           @Header(KafkaHeaders.RECEIVED_PARTITION) int partition){
-
-        savePaymentEvent(event,offset,partition);
-
-    }
-    @RetryableTopic(
-            attempts = "3",
-            backoff = @Backoff(delay = 1000,multiplier = 2.0),
-            autoCreateTopics = "true",
-            dltStrategy = DltStrategy.FAIL_ON_ERROR,
-            kafkaTemplate = "retryKafkaTemplate"
-    )
-    @KafkaListener(
-            groupId = "test",
-            topicPartitions = @TopicPartition(
-                    topic = "smith.events.ingestion.v1.payment",
-                    partitions = {"3"}),
-            concurrency = "1")
-    public void eventListenerLowPayment(EventDTO event,
-                                        @Header(KafkaHeaders.OFFSET) long offset,
-                                        @Header(KafkaHeaders.RECEIVED_PARTITION) int partition){
-
-        savePaymentEvent(event,offset,partition);
-
-    }
 
     private void savePaymentEvent(EventDTO event, long offset, int partition){
         logger.info("message received in listener: {}", event);

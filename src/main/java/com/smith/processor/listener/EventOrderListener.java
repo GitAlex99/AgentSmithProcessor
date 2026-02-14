@@ -33,48 +33,13 @@ public class EventOrderListener {
             kafkaTemplate = "retryKafkaTemplate"
     )
     @KafkaListener(
-            groupId = "test",
-            topicPartitions = @TopicPartition(
-                    topic = "smith.events.ingestion.v1.order",
-                    partitions = {"0,1"}),
-            concurrency = "2")
+            topics = "smith.events.ingestion.v1.order",
+            groupId = "user-order-processor",
+            concurrency = "6"
+    )
     public void eventListenerHighOrder(EventDTO event,
                                        @Header(KafkaHeaders.OFFSET) long offset,
                                        @Header(KafkaHeaders.RECEIVED_PARTITION) int partition){
-
-        saveOrderEvent(event,offset,partition);
-
-    }
-
-    @RetryableTopic(
-            attempts = "3",
-            backoff = @Backoff(delay = 1000,multiplier = 2.0),
-            autoCreateTopics = "true",
-            dltStrategy = DltStrategy.FAIL_ON_ERROR,
-            kafkaTemplate = "retryKafkaTemplate"
-    )
-    @KafkaListener(
-            groupId = "test",
-            topicPartitions = @TopicPartition(
-                    topic = "smith.events.ingestion.v1.order",
-                    partitions = {"2"}),
-            concurrency = "1")
-    public void eventListenerMediumOrder(EventDTO event,
-                                         @Header(KafkaHeaders.OFFSET) long offset,
-                                         @Header(KafkaHeaders.RECEIVED_PARTITION) int partition){
-
-        saveOrderEvent(event,offset,partition);
-
-    }
-    @KafkaListener(
-            groupId = "test",
-            topicPartitions = @TopicPartition(
-                    topic = "smith.events.ingestion.v1.order",
-                    partitions = {"3"}),
-            concurrency = "1")
-    public void eventListenerLowOrder(EventDTO event,
-                                      @Header(KafkaHeaders.OFFSET) long offset,
-                                      @Header(KafkaHeaders.RECEIVED_PARTITION) int partition){
 
         saveOrderEvent(event,offset,partition);
 
